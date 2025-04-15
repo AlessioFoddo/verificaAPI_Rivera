@@ -2,59 +2,60 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class DocentiController
+class ScuoleController
 {
-  public function allDocenti(Request $request, Response $response, $args){
+
+  public function allSchools(Request $request, Response $response, $args){
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $result = $mysqli_connection->query("SELECT * FROM docenti where scuola_id = $args[scuola_id]" );
+    $result = $mysqli_connection->query("SELECT * FROM scuole");
     $results = $result->fetch_all(MYSQLI_ASSOC);
 
     $response->getBody()->write(json_encode($results));
     return $response->withHeader("Content-type", "application/json")->withStatus(200);
   }
-
-  public function singleDocente(Request $request, Response $response, $args){
+  
+  public function singleSchool(Request $request, Response $response, $args){
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $result = $mysqli_connection->query("SELECT docenti.* FROM docenti WHERE scuola_id = $args[scuola_id] AND id = $args[id_docente]");
+    $result = $mysqli_connection->query("SELECT * FROM scuole WHERE id = ".$args['scuola_id']);
     $results = $result->fetch_all(MYSQLI_ASSOC);
 
     $response->getBody()->write(json_encode($results));
     return $response->withHeader("Content-type", "application/json")->withStatus(200);
   }
-
-  public function createDocente(Request $request, Response $response, $args){
+  
+  public function createSchool(Request $request, Response $response, $args){
     $body = json_decode($request->getBody()->getContents(), true);
     $nome = $body["nome"];
-    $cognome = $body["cognome"];
+    $indirizzo = $body["indirizzo"]; 
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $creation = $mysqli_connection->query("INSERT INTO `docenti`(`scuola_id`, `nome`, `cognome`) VALUES ('$args[scuola_id]', '$nome', '$cognome')");
+    $creation = $mysqli_connection->query("INSERT INTO `scuole`(`nome`, `indirizzo`) VALUES ('$nome','$indirizzo')");
 
     $response->getBody()->write("created");
     return $response->withHeader("Content-type", "application/json")->withStatus(201);
   }
 
-  public function updateDocente(Request $request, Response $response, $args){
+  public function updateSchool(Request $request, Response $response, $args){
     $body = json_decode($request->getBody()->getContents(), true);
     $nome = $body["nome"];
-    $cognome = $body["cognome"];
+    $indirizzo = $body["indirizzo"]; 
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $update = $mysqli_connection->query("UPDATE `docenti` SET `nome`='$nome',`cognome`='$cognome' WHERE scuola_id = $args[scuola_id] AND id = $args[id_docente]");
+    $creation = $mysqli_connection->query("UPDATE `scuole` SET `nome`='$nome',`indirizzo`='$indirizzo' WHERE id = $args[scuola_id]");
 
     $response->getBody()->write("updated");
     return $response->withHeader("Content-type", "application/json")->withStatus(200);
   }
 
-  public function deleteDocente(Request $request, Response $response, $args){
+  public function deleteSchool(Request $request, Response $response, $args){
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $result = $mysqli_connection->query("DELETE FROM `docenti` WHERE scuola_id = $args[scuola_id] AND id = $args[id_docente]");
+    $result = $mysqli_connection->query("DELETE FROM `scuole` WHERE id = $args[scuola_id]");
 
     $response->getBody()->write("deleted");
     return $response->withHeader("Content-type", "application/json")->withStatus(200);
   }
 
-  public function filterDocenti(Request $request, Response $response, $args){
+  public function filterSchool(Request $request, Response $response, $args){
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $result = $mysqli_connection->query("SELECT * FROM `scuole` WHERE (nome LIKE '%$args[txt]%' OR cognome LIKE '%$args[txt]%')");
+    $result = $mysqli_connection->query("SELECT * FROM `scuole` WHERE (nome LIKE '%$args[txt]%' OR indirizzo LIKE '%$args[txt]%')");
     $results = $result->fetch_all(MYSQLI_ASSOC);
 
     $response->getBody()->write(json_encode($results));
