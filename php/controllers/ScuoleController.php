@@ -6,6 +6,7 @@ class ScuoleController
 {
 
   public function allSchools(Request $request, Response $response, $args){
+    sleep(3);
     $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
     $result = $mysqli_connection->query("SELECT * FROM scuole");
     $results = $result->fetch_all(MYSQLI_ASSOC);
